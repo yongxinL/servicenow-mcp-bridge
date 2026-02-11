@@ -44,15 +44,24 @@ export interface ServiceNowSingleResponse<T> {
 
 /**
  * Error thrown when ServiceNow API returns an HTTP error status.
- * Carries status code, status text, and response body for downstream error handling.
+ * Carries status code, status text, response body, and optional headers for downstream error handling.
  */
 export class ServiceNowHttpError extends Error {
   constructor(
     public readonly statusCode: number,
     public readonly statusText: string,
     public readonly body: string,
+    public readonly headers?: Headers,
   ) {
     super(`ServiceNow API error: ${statusCode} ${statusText}`);
     this.name = 'ServiceNowHttpError';
+  }
+
+  /**
+   * Get Retry-After header value if present.
+   * Can be either delay-seconds (integer) or HTTP-date.
+   */
+  get retryAfter(): string | null {
+    return this.headers?.get('retry-after') ?? null;
   }
 }

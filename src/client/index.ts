@@ -194,6 +194,7 @@ export class ServiceNowClient {
         response.status,
         response.statusText,
         body,
+        response.headers,
       );
     }
 

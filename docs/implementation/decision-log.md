@@ -236,4 +236,75 @@ currentTime += 5000;
 expect(limiter.getTokenCount()).toBe(5); // Refilled 5 tokens
 ```
 
+### 2026-02-12 - Retry Handler with Full Jitter Exponential Backoff
+
+**Context:**
+Need automatic retry mechanism for transient ServiceNow API failures (rate limits, service unavailability, network errors) without overwhelming the service.
+
+**Decision:**
+Implement higher-order function `withRetry<T>(operation, config)` using exponential backoff with **full jitter**. Retryable errors: HTTP 429, 503, network errors (TypeError, AbortError). Non-retryable: 400, 401, 403, 404, 500.
+
+**Rationale:**
+- **Higher-order function over class**: Simpler API, easier to compose, no state management
+- **Full jitter** (`Math.random() * cappedDelay`): Most effective at preventing thundering herd per AWS Architecture Blog
+- **HTTP 500 not retryable**: ServiceNow 500 errors are typically application errors (bad query, internal logic), not transient
+- **Network errors retryable**: Connection refused, DNS failure, timeouts are transient in enterprise environments
+- **Max delay cap (30s)**: Prevents absurdly long waits on high retry counts, appropriate for interactive MCP tools
+
+**Consequences:**
+- Configurable retry behavior: `maxRetries`, `baseDelayMs`, `maxDelayMs`
+- Exponential backoff: delay doubles with each attempt (1s → 2s → 4s → 8s...)
+- Full jitter randomizes delay between 0 and calculated backoff
+- After all retries exhausted, last error is thrown
+- Respects `Retry-After` header when present
+
+**Alternatives Considered:**
+- Equal jitter - rejected: full jitter is simpler and equally effective
+- Decorrelated jitter - rejected: more complex, minimal benefit over full jitter
+- p-retry library - rejected: overkill, adds dependency for ~100 LOC algorithm
+
+**Example:**
+```typescript
+const result = await withRetry(
+  () => client.get('incident'),
+  { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 30000 }
+);
+```
+
+### 2026-02-12 - Retry-After Header Support in ServiceNowHttpError
+
+**Context:**
+ServiceNow may return `Retry-After` header with HTTP 429 responses, indicating exact wait time before retry. Need to capture and respect this header.
+
+**Decision:**
+Extend `ServiceNowHttpError` to optionally capture response `headers`. Add `retryAfter` getter property that returns `Retry-After` header value. Update HTTP client to pass response headers when throwing errors.
+
+**Rationale:**
+- Respecting `Retry-After` prevents retry storms and follows HTTP standards
+- Storing full `Headers` object allows future extensibility (other headers may be useful)
+- Getter property provides clean API: `error.retryAfter`
+- Backward compatible: headers parameter is optional
+
+**Consequences:**
+- Retry handler checks `Retry-After` before calculating exponential backoff
+- Supports both delay-seconds (`"120"`) and HTTP-date formats
+- Falls back to exponential backoff if header invalid or missing
+- ServiceNowHttpError instances now carry more context for debugging
+
+**Implementation:**
+```typescript
+export class ServiceNowHttpError extends Error {
+  constructor(
+    public readonly statusCode: number,
+    public readonly statusText: string,
+    public readonly body: string,
+    public readonly headers?: Headers,
+  ) { ... }
+
+  get retryAfter(): string | null {
+    return this.headers?.get('retry-after') ?? null;
+  }
+}
+```
+
 ---
