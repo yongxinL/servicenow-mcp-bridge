@@ -382,4 +382,82 @@ Circuit-breaking errors: **HTTP 5xx (500, 502, 503, etc.)** and **network errors
 - Generic Error ✗
 ```
 
+### 2026-02-12 - Error Body Sanitization to Prevent Information Leakage
+
+**Context:**
+ServiceNow error responses may contain stack traces, internal file paths, credentials, or other sensitive information that should not be exposed to MCP clients.
+
+**Decision:**
+Implement multi-layer error body sanitization: extract ServiceNow error.message from JSON, strip stack traces/paths/credentials, truncate long bodies, return undefined if content appears sensitive.
+
+**Rationale:**
+- Security: Prevent leaking internal implementation details, paths, or credentials
+- User experience: Extract clean, user-friendly messages from ServiceNow JSON errors
+- Safety: Pattern-based detection of sensitive content (stack traces, paths, password/token/secret keywords)
+- Conservative: When in doubt, omit details rather than risk leaking information
+
+**Consequences:**
+- Error responses contain clean, user-facing messages only
+- Stack traces are logged (via logger) but never sent to clients
+- ServiceNow error.message and error.detail are extracted from JSON
+- Internal paths (/opt/, /usr/, node_modules) are stripped
+- Credential-related keywords (password, token, secret) cause details to be omitted
+- 500-character truncation prevents massive error dumps
+
+**Sanitization Rules:**
+```typescript
+// Extract from ServiceNow JSON
+{ error: { message: "User-friendly message" } } → "User-friendly message"
+
+// Strip sensitive patterns
+"Error at module.js:123:45" → undefined (stack trace)
+"Error in /opt/servicenow/app" → undefined (internal path)
+"password incorrect" → undefined (credential keyword)
+
+// Truncate long bodies
+1000-character error → 500-character truncated
+```
+
+**Alternatives Considered:**
+- No sanitization - rejected: security risk, information leakage
+- Whitelist-only approach - rejected: too restrictive, misses valid error messages
+- Return raw ServiceNow errors - rejected: exposes internal details
+
+### 2026-02-12 - Empty Result Sets Are Not Errors (isError: false)
+
+**Context:**
+HTTP 200 with `result: []` is a valid ServiceNow response indicating no records matched the query. Should not be treated as an error.
+
+**Decision:**
+Create `buildEmptyResultResponse()` that returns `CallToolResult` with `isError: false` and descriptive message like "No records found in table 'incident' matching query: active=true".
+
+**Rationale:**
+- Empty results are semantically valid (query succeeded, just no matches)
+- MCP clients should distinguish between errors and empty results
+- Users need clear messaging about why results are empty (which table, which query)
+- Following HTTP semantics: 200 = success, even if result set is empty
+
+**Consequences:**
+- Module handlers must check for empty results and call buildEmptyResultResponse()
+- MCP clients receive isError: false for empty results (won't show error UI)
+- Users get helpful context about what was queried
+- Consistent with RESTful API conventions
+
+**Example:**
+```typescript
+// Query returns empty result
+const response = await client.get('incident', { sysparm_query: 'number=INC9999999' });
+
+if (response.result.length === 0) {
+  return buildEmptyResultResponse('incident', 'number=INC9999999');
+  // Returns: { isError: false, content: [{ type: "text", text: "No records found..." }] }
+}
+
+// ❌ AVOID: Treating empty results as errors
+if (response.result.length === 0) {
+  return buildErrorResult(ServiceNowErrorCode.NOT_FOUND, "No records");
+  // Wrong: isError: true makes clients think something failed
+}
+```
+
 ---
