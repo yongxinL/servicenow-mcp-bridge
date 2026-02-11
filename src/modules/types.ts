@@ -5,7 +5,6 @@
  * and their configuration structure.
  */
 
-import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import type { ServiceNowClient } from '../client/index.js';
 
 /**
@@ -26,23 +25,53 @@ export interface ModuleConfig {
 }
 
 /**
+ * Tool definition for MCP protocol.
+ */
+export interface Tool {
+  name: string;
+  description: string;
+  inputSchema: any; // JSON Schema
+}
+
+/**
+ * Tool handler function type.
+ * Returns MCP CallToolResult format.
+ */
+export type ToolHandler = (args: any) => Promise<any>;
+
+/**
+ * Module tools and handlers.
+ * Returned by module's getTools() method for centralized registration.
+ */
+export interface ModuleTools {
+  tools: Tool[];
+  handlers: Map<string, ToolHandler>;
+}
+
+/**
  * ServiceNow domain module interface.
  *
  * Each module implements this interface to participate in the module registry.
- * Modules are responsible for registering their MCP tools with the server.
+ * Modules provide their tool definitions and handlers which are registered
+ * centrally by the module registry.
  *
  * @example
  * const incidentModule: ServiceNowModule = {
  *   name: "incident",
  *   description: "Incident Management",
- *   register(server, client, config) {
- *     // Register read tools (always available)
- *     server.tool("list_incidents", "List incidents", schema, handler);
+ *   getTools(client, config) {
+ *     const tools: Tool[] = [
+ *       { name: "list_incidents", description: "...", inputSchema: {...} }
+ *     ];
+ *     const handlers = new Map<string, ToolHandler>();
+ *     handlers.set("list_incidents", async (args) => {...});
  *
- *     // Register write tools (only when allow_write is true)
  *     if (config.allow_write) {
- *       server.tool("create_incident", "Create incident", schema, handler);
+ *       tools.push({ name: "create_incident", ... });
+ *       handlers.set("create_incident", async (args) => {...});
  *     }
+ *
+ *     return { tools, handlers };
  *   }
  * };
  */
@@ -60,23 +89,23 @@ export interface ServiceNowModule {
   description: string;
 
   /**
-   * Register MCP tools with the server.
+   * Get tool definitions and handlers for this module.
    *
    * This method is called by the module registry at server startup for each
-   * enabled module. The module should register its tools using server.tool().
+   * enabled module. The module should return its tool definitions and handlers.
    *
-   * Read-only tools (list, get, search, query) should always be registered
+   * Read-only tools (list, get, search, query) should always be included
    * when the module is enabled.
    *
-   * Write tools (create, update, delete) should only be registered when
+   * Write tools (create, update, delete) should only be included when
    * config.allow_write is true. This provides per-module write control.
    *
-   * @param server - MCP server instance for tool registration
    * @param client - ServiceNow HTTP client for API calls
    * @param config - Module-specific configuration (enabled, allow_write)
+   * @returns Tool definitions and their handlers
    *
-   * @throws Should throw on critical registration failures. The registry will
+   * @throws Should throw on critical initialization failures. The registry will
    *         catch and log the error, then continue with other modules.
    */
-  register(server: Server, client: ServiceNowClient, config: ModuleConfig): void;
+  getTools(client: ServiceNowClient, config: ModuleConfig): ModuleTools;
 }

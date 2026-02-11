@@ -16,7 +16,7 @@
 
 ## M2: Priority Modules
 
-- [ ] T-2.1.1: Generic module (5h, 30K tokens, Sonnet)
+- [x] T-2.1.1: Generic module (5h, 30K tokens, Sonnet) ✅ 2026-02-12
 - [ ] T-2.2.1: Knowledge Base module (5h, 30K tokens, Sonnet)
 - [ ] T-2.3.1: Incident module (5h, 30K tokens, Sonnet)
 
@@ -44,9 +44,9 @@
 | Metric | Value |
 |--------|-------|
 | Total Tasks | 25 |
-| Completed | 11 |
+| Completed | 12 |
 | In Progress | 0 |
-| Remaining | 14 |
-| Total Effort | ~80h (42h completed, ~38h remaining) |
+| Remaining | 13 |
+| Total Effort | ~80h (47h completed, ~33h remaining) |
 | Total Tokens | ~579K (+15% buffer = ~666K) |
-| Actual Tokens Used | ~236K (T-1.1.1 through T-1.5.2) |
+| Actual Tokens Used | ~266K (T-1.1.1 through T-2.1.1) |

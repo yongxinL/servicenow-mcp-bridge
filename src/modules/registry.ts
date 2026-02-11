@@ -18,6 +18,7 @@ import type { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import type { ServiceNowClient } from '../client/index.js';
 import type { AppConfig } from '../config/schema.js';
 import type { ServiceNowModule, ModuleConfig } from './types.js';
+import { genericModule } from './generic/index.js';
 
 /**
  * All available ServiceNow modules.
@@ -25,8 +26,10 @@ import type { ServiceNowModule, ModuleConfig } from './types.js';
  * This array serves as the single source of truth for which modules exist.
  * Modules are registered at startup in the order they appear in this array.
  *
- * Initially empty — modules are added as they are implemented:
- * - T-2.1.1: Generic module (query_records, get_record)
+ * Modules implemented:
+ * - T-2.1.1: Generic module (query_records, get_record, create/update/delete) ✅
+ *
+ * Pending implementation:
  * - T-2.2.1: Knowledge Base module (search_kb, get_kb_article)
  * - T-2.3.1: Incident module (list_incidents, get_incident, create_incident)
  * - T-3.1.1: Change module
@@ -39,11 +42,12 @@ import type { ServiceNowModule, ModuleConfig } from './types.js';
  * // When a module is implemented, import and add it:
  * import { incidentModule } from './incident/index.js';
  * export const ALL_MODULES: ServiceNowModule[] = [
+ *   genericModule,
  *   incidentModule,
  * ];
  */
 export const ALL_MODULES: ServiceNowModule[] = [
-  // Modules will be added here as they are implemented in M2 and M3
+  genericModule, // T-2.1.1 ✅
 ];
 
 /**
@@ -79,6 +83,10 @@ export function registerModules(
   let enabledCount = 0;
   let failedCount = 0;
 
+  // Collect all tools and handlers from enabled modules
+  const allTools: any[] = [];
+  const allHandlers = new Map<string, any>();
+
   logger.info(
     { totalModules: ALL_MODULES.length },
     'Starting module registration...',
@@ -104,7 +112,7 @@ export function registerModules(
       continue;
     }
 
-    // Register enabled module
+    // Get tools from enabled module
     try {
       // Build ModuleConfig from app config
       // User module doesn't have allow_write, so we default to false
@@ -114,14 +122,22 @@ export function registerModules(
           'allow_write' in moduleConfig ? moduleConfig.allow_write : false,
       };
 
-      // Call module's register() method
-      module.register(server, client, modConfig);
+      // Get module's tools and handlers
+      const { tools, handlers } = module.getTools(client, modConfig);
+
+      // Add to central registry
+      allTools.push(...tools);
+      for (const [name, handler] of handlers) {
+        allHandlers.set(name, handler);
+      }
+
       enabledCount++;
 
       logger.info(
         {
           module: module.name,
           allow_write: modConfig.allow_write,
+          toolCount: tools.length,
         },
         `Module registered: ${module.description}`,
       );
@@ -137,11 +153,52 @@ export function registerModules(
     }
   }
 
+  // Register central tools/list handler
+  (server as any).setRequestHandler('tools/list', async () => {
+    return { tools: allTools };
+  });
+
+  // Register central tools/call handler
+  (server as any).setRequestHandler('tools/call', async (request: any) => {
+    const toolName = request.params.name;
+    const args = request.params.arguments || {};
+
+    const handler = allHandlers.get(toolName);
+    if (!handler) {
+      return {
+        content: [
+          {
+            type: 'text' as const,
+            text: JSON.stringify({
+              error: 'Unknown tool',
+              details: `Tool '${toolName}' is not registered`,
+            }),
+          },
+        ],
+        isError: true,
+      };
+    }
+
+    try {
+      return await handler(args);
+    } catch (error) {
+      logger.error(
+        {
+          tool: toolName,
+          error: error instanceof Error ? error.message : String(error),
+        },
+        'Tool execution failed',
+      );
+      throw error;
+    }
+  });
+
   logger.info(
     {
       enabledCount,
       failedCount,
       totalAvailable: ALL_MODULES.length,
+      totalTools: allTools.length,
     },
     'Module registration complete',
   );
