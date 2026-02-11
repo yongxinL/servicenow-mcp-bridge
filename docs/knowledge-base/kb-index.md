@@ -15,12 +15,30 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 11 | 2026-02-12 |
-| **Total** | **11** | 2026-02-12 |
+| Instincts | 13 | 2026-02-12 |
+| **Total** | **13** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### credential-redaction-in-logs (confidence: 0.95)
+**Trigger:** "when implementing structured JSON logging for systems with credentials"
+**Domain:** security, logging | **Phase:** 3 | **Created:** 2026-02-12
+
+Use Pino's declarative `redact.paths` configuration to redact sensitive fields in logs. Cover passwords, tokens, client secrets, and both cases of authorization headers.
+
+**File:** `instincts/personal/credential-redaction-in-logs.md`
+**Tags:** logging, security, pino, credential-redaction, json
+
+### error-response-sanitization (confidence: 0.95)
+**Trigger:** "when parsing and returning error responses from external APIs"
+**Domain:** security, error-handling | **Phase:** 3 | **Created:** 2026-02-12
+
+Parse structured errors, strip sensitive patterns (stack traces, file paths, credentials), truncate long bodies, and normalize to API response format.
+
+**File:** `instincts/personal/error-response-sanitization.md`
+**Tags:** error-handling, security, api-integration, sanitization
 
 ### time-injection-pattern (confidence: 0.9)
 **Trigger:** "when implementing time-based logic (delays, timeouts, expiry)"

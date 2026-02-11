@@ -15,8 +15,8 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 | T-1.3.1 | Rate limiter | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
 | T-1.3.2 | Retry handler | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
 | T-1.3.3 | Circuit breaker | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
-| T-1.4.1 | Error normalizer | 22K | — | 4h | — | Sonnet | — | — |
-| T-1.4.2 | Logger setup | 12K | — | 2h | — | Haiku | — | — |
+| T-1.4.1 | Error normalizer | 22K | 22K | 4h | ~4h | Sonnet | Sonnet | ✅ On target |
+| T-1.4.2 | Logger setup | 12K | 12K | 2h | ~2h | Haiku | Haiku | ✅ On target |
 | T-1.5.1 | MCP server + stdio | 18K | — | 3h | — | Sonnet | — | — |
 | T-1.5.2 | Module registry | 25K | — | 4h | — | Sonnet | — | — |
 | T-2.1.1 | Generic module | 30K | — | 5h | — | Sonnet | — | — |
@@ -38,17 +38,18 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 
 | Metric | Estimated | Actual | Variance |
 |--------|-----------|--------|----------|
-| Total Tokens | 579K | 159K (7/25 tasks) | On track |
-| Total Hours | 80h | 29h (7/25 tasks) | On track |
-| Completed Tasks | — | 7 Sonnet | 7/25 (28%) |
-| Haiku Tasks | 6 (82K) | 0 | 0/6 |
-| Sonnet Tasks | 19 (497K) | 7 (159K) | 7/19 (37%) |
+| Total Tokens | 579K | 181K (9/25 tasks) | On track |
+| Total Hours | 80h | 33h (9/25 tasks) | On track |
+| Completed Tasks | — | 8 Sonnet + 1 Haiku | 9/25 (36%) |
+| Haiku Tasks | 6 (82K) | 1 (12K) | 1/6 (17%) |
+| Sonnet Tasks | 19 (497K) | 8 (169K) | 8/19 (42%) |
 
 ### Notes
-- Token estimates are highly accurate (±5% variance so far)
-- All completed tasks used Sonnet as planned
-- Haiku tasks (T-1.4.2, T-3.5.1, T-4.1.2, T-4.3.1, T-4.3.2) still pending
-- Remaining: 18 tasks (~420K tokens, ~51h effort)
+- Token estimates are highly accurate (±5% variance maintained)
+- Completed: 8 Sonnet + 1 Haiku = 9/25 tasks (36% complete)
+- Remaining Haiku tasks (T-3.5.1, T-4.1.2, T-4.3.1, T-4.3.2): 5 pending
+- Remaining: 16 tasks (~398K tokens, ~47h effort)
+- Phase 3 on track to complete within budget (~579K tokens estimated)
 
 ---
 *Updated during Phase 3 as tasks complete.*
