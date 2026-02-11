@@ -15,12 +15,21 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 16 | 2026-02-12 |
-| **Total** | **16** | 2026-02-12 |
+| Instincts | 17 | 2026-02-12 |
+| **Total** | **17** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### centralized-tool-registry-pattern (confidence: 0.9)
+**Trigger:** "when implementing plugin system where plugins register handlers with a server"
+**Domain:** architecture | **Phase:** 3 | **Created:** 2026-02-12
+
+When multiple plugins need to register handlers for the same method, use centralized aggregation. Plugins return handler definitions, registry collects and registers once. Prevents handler conflicts.
+
+**File:** `instincts/personal/centralized-tool-registry-pattern.md`
+**Tags:** architecture, plugins, registry, handler-routing, mcp
 
 ### registration-time-authorization (confidence: 0.9)
 **Trigger:** "when implementing authorization for API endpoints or tool access"
