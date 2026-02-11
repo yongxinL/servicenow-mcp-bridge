@@ -15,12 +15,21 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 17 | 2026-02-12 |
-| **Total** | **17** | 2026-02-12 |
+| Instincts | 18 | 2026-02-12 |
+| **Total** | **18** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### servicenow-encoded-query-patterns (confidence: 0.85)
+**Trigger:** "when implementing ServiceNow Table API queries with search or filtering"
+**Domain:** api-integration | **Phase:** 3 | **Created:** 2026-02-12
+
+Use ServiceNow's encoded query syntax (LIKE for search, ^ for AND, ^OR for OR). Common pattern: multi-field search with default filters (published, active).
+
+**File:** `instincts/personal/servicenow-encoded-query-patterns.md`
+**Tags:** servicenow, api, query, search, like, filter
 
 ### centralized-tool-registry-pattern (confidence: 0.9)
 **Trigger:** "when implementing plugin system where plugins register handlers with a server"
