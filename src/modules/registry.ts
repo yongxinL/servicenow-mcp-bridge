@@ -19,6 +19,7 @@ import type { ServiceNowClient } from '../client/index.js';
 import type { AppConfig } from '../config/schema.js';
 import type { ServiceNowModule, ModuleConfig } from './types.js';
 import { genericModule } from './generic/index.js';
+import { knowledgeModule } from './knowledge/index.js';
 
 /**
  * All available ServiceNow modules.
@@ -28,9 +29,9 @@ import { genericModule } from './generic/index.js';
  *
  * Modules implemented:
  * - T-2.1.1: Generic module (query_records, get_record, create/update/delete) ✅
+ * - T-2.2.1: Knowledge Base module (search_knowledge, get_article, create/update) ✅
  *
  * Pending implementation:
- * - T-2.2.1: Knowledge Base module (search_kb, get_kb_article)
  * - T-2.3.1: Incident module (list_incidents, get_incident, create_incident)
  * - T-3.1.1: Change module
  * - T-3.2.1: Problem module
@@ -43,11 +44,13 @@ import { genericModule } from './generic/index.js';
  * import { incidentModule } from './incident/index.js';
  * export const ALL_MODULES: ServiceNowModule[] = [
  *   genericModule,
+ *   knowledgeModule,
  *   incidentModule,
  * ];
  */
 export const ALL_MODULES: ServiceNowModule[] = [
   genericModule, // T-2.1.1 ✅
+  knowledgeModule, // T-2.2.1 ✅
 ];
 
 /**
