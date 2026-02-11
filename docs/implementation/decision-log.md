@@ -307,4 +307,79 @@ export class ServiceNowHttpError extends Error {
 }
 ```
 
+### 2026-02-12 - Config-Gated Circuit Breaker (Disabled by Default)
+
+**Context:**
+Need circuit breaker to prevent repeated calls to failing ServiceNow instances, but circuit breakers can cause surprising behavior if not understood.
+
+**Decision:**
+Implement three-state circuit breaker (CLOSED, OPEN, HALF_OPEN) that is **config-gated and disabled by default** (`circuit_breaker.enabled: false`). Users must explicitly opt-in.
+
+**Rationale:**
+- Circuit breakers add complexity and can cause confusing "service is down" errors when circuit is open
+- Not all users need circuit breaker protection (especially for low-traffic use cases)
+- Explicit opt-in ensures users understand the behavior
+- When disabled, zero overhead (all requests bypass circuit breaker logic)
+- Consecutive failure counting is simpler than sliding window for v0.1.0
+
+**Consequences:**
+- Three states: CLOSED (normal), OPEN (fast fail), HALF_OPEN (probe)
+- Configurable `failureThreshold` (default: 5) and `resetTimeoutMs` (default: 30s)
+- Only server errors (5xx) and network errors trip circuit (not 4xx, not 429)
+- Single circuit for entire server (no per-table circuits)
+- Fast fail when OPEN - requests don't execute, throw CircuitOpenError immediately
+
+**Alternatives Considered:**
+- Always enabled - rejected: surprising behavior, not all users need it
+- Percentage-based tripping - rejected: more complex, consecutive failures sufficient for v0.1.0
+- Multiple circuits (per-table) - rejected: over-engineering for initial release
+
+**Configuration Example:**
+```typescript
+{
+  circuit_breaker: {
+    enabled: true,              // Must explicitly enable
+    failure_threshold: 5,       // Open after 5 consecutive failures
+    reset_timeout_ms: 30000     // Wait 30s before probe attempt
+  }
+}
+```
+
+### 2026-02-12 - Circuit Breaker Error Classification (5xx Only)
+
+**Context:**
+Circuit breaker should only trip on genuine service failures, not client errors or rate limits.
+
+**Decision:**
+Circuit-breaking errors: **HTTP 5xx (500, 502, 503, etc.)** and **network errors** (TypeError, AbortError). Non-circuit-breaking: HTTP 4xx (400, 401, 403, 404), HTTP 429 (rate limited), generic application errors.
+
+**Rationale:**
+- **4xx errors are client mistakes**, not service failures - a 404 or 400 doesn't mean the service is down
+- **HTTP 429 (rate limited)** is handled by rate limiter and retry handler - tripping circuit would be counterproductive
+- **5xx errors indicate server problems** - service is genuinely struggling or down
+- **Network errors** (connection refused, DNS, timeouts) indicate connectivity issues
+- This classification prevents false positives where circuit opens due to bad requests
+
+**Consequences:**
+- Circuit only opens when ServiceNow is genuinely failing (not when clients make mistakes)
+- HTTP 429 correctly flows through retry handler (which respects Retry-After)
+- More accurate service health detection
+
+**Example Classification:**
+```typescript
+// Circuit-breaking errors (count toward threshold)
+- HTTP 500 Internal Server Error ✓
+- HTTP 502 Bad Gateway ✓
+- HTTP 503 Service Unavailable ✓
+- TypeError (network error) ✓
+- AbortError (timeout) ✓
+
+// Non-circuit-breaking errors (don't count)
+- HTTP 400 Bad Request ✗
+- HTTP 401 Unauthorized ✗
+- HTTP 404 Not Found ✗
+- HTTP 429 Too Many Requests ✗ (handled by rate limiter)
+- Generic Error ✗
+```
+
 ---
