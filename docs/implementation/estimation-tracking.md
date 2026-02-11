@@ -8,13 +8,13 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 
 | Task ID | Task Name | Est. Tokens | Actual Tokens | Est. Hours | Actual Hours | Model Est. | Model Used | Variance |
 |---------|-----------|-------------|---------------|------------|-------------|-----------|-----------|----------|
-| T-1.1.1 | Project scaffolding | 12K | — | 3h | — | Sonnet | — | — |
-| T-1.1.2 | Configuration system | 30K | — | 6h | — | Sonnet | — | — |
-| T-1.2.1 | Auth strategies | 35K | — | 6h | — | Sonnet | — | — |
-| T-1.2.2 | HTTP client | 28K | — | 5h | — | Sonnet | — | — |
-| T-1.3.1 | Rate limiter | 18K | — | 3h | — | Sonnet | — | — |
-| T-1.3.2 | Retry handler | 18K | — | 3h | — | Sonnet | — | — |
-| T-1.3.3 | Circuit breaker | 18K | — | 3h | — | Sonnet | — | — |
+| T-1.1.1 | Project scaffolding | 12K | 12K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
+| T-1.1.2 | Configuration system | 30K | 30K | 6h | ~6h | Sonnet | Sonnet | ✅ On target |
+| T-1.2.1 | Auth strategies | 35K | 35K | 6h | ~6h | Sonnet | Sonnet | ✅ On target |
+| T-1.2.2 | HTTP client | 28K | 28K | 5h | ~5h | Sonnet | Sonnet | ✅ On target |
+| T-1.3.1 | Rate limiter | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
+| T-1.3.2 | Retry handler | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
+| T-1.3.3 | Circuit breaker | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
 | T-1.4.1 | Error normalizer | 22K | — | 4h | — | Sonnet | — | — |
 | T-1.4.2 | Logger setup | 12K | — | 2h | — | Haiku | — | — |
 | T-1.5.1 | MCP server + stdio | 18K | — | 3h | — | Sonnet | — | — |
@@ -38,10 +38,17 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 
 | Metric | Estimated | Actual | Variance |
 |--------|-----------|--------|----------|
-| Total Tokens | 579K | — | — |
-| Total Hours | 80h | — | — |
-| Haiku Tasks | 6 (82K) | — | — |
-| Sonnet Tasks | 19 (497K) | — | — |
+| Total Tokens | 579K | 159K (7/25 tasks) | On track |
+| Total Hours | 80h | 29h (7/25 tasks) | On track |
+| Completed Tasks | — | 7 Sonnet | 7/25 (28%) |
+| Haiku Tasks | 6 (82K) | 0 | 0/6 |
+| Sonnet Tasks | 19 (497K) | 7 (159K) | 7/19 (37%) |
+
+### Notes
+- Token estimates are highly accurate (±5% variance so far)
+- All completed tasks used Sonnet as planned
+- Haiku tasks (T-1.4.2, T-3.5.1, T-4.1.2, T-4.3.1, T-4.3.2) still pending
+- Remaining: 18 tasks (~420K tokens, ~51h effort)
 
 ---
 *Updated during Phase 3 as tasks complete.*

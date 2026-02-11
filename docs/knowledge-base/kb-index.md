@@ -15,12 +15,48 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 7 | 2026-02-12 |
-| **Total** | **7** | 2026-02-12 |
+| Instincts | 11 | 2026-02-12 |
+| **Total** | **11** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### time-injection-pattern (confidence: 0.9)
+**Trigger:** "when implementing time-based logic (delays, timeouts, expiry)"
+**Domain:** testing | **Phase:** 3 | **Created:** 2026-02-12
+
+Inject time via constructor parameter (now: () => number = Date.now) for instant, deterministic testing without real delays.
+
+**File:** `instincts/personal/time-injection-pattern.md`
+**Tags:** testing, time, dependency-injection, testability, fake-timers
+
+### config-gated-features (confidence: 0.8)
+**Trigger:** "when implementing complex or surprising features"
+**Domain:** architecture | **Phase:** 2,3 | **Created:** 2026-02-12
+
+Complex features (circuit breakers, aggressive caching) should be disabled by default and require explicit opt-in via configuration.
+
+**File:** `instincts/personal/config-gated-features.md`
+**Tags:** configuration, feature-flags, opt-in, defaults, circuit-breaker
+
+### error-classification-hierarchy (confidence: 0.9)
+**Trigger:** "when implementing error handling with different strategies (retry, circuit breaker)"
+**Domain:** architecture | **Phase:** 3 | **Created:** 2026-02-12
+
+Establish clear error classification: transient (429, 503), server failures (5xx, network), client errors (4xx). Different handling for each class.
+
+**File:** `instincts/personal/error-classification-hierarchy.md`
+**Tags:** error-handling, http, retry, circuit-breaker, classification
+
+### state-machine-testing-strategy (confidence: 0.8)
+**Trigger:** "when implementing state machines (circuit breaker, connection pools, workflows)"
+**Domain:** testing | **Phase:** 3 | **Created:** 2026-02-12
+
+Test state machines with individual transitions AND complete cycles. Ensures both correctness and end-to-end behavior.
+
+**File:** `instincts/personal/state-machine-testing-strategy.md`
+**Tags:** testing, state-machine, circuit-breaker, transitions, coverage
 
 ### vitest-fake-timers-concurrency (confidence: 0.8)
 **Trigger:** "when testing concurrent async operations with vitest fake timers"
