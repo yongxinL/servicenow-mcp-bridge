@@ -6,7 +6,7 @@
 - [x] T-1.1.2: Configuration system (6h, 30K tokens, Sonnet) ✅ 2026-02-11
 - [x] T-1.2.1: Auth strategies (6h, 35K tokens, Sonnet) ✅ 2026-02-12
 - [x] T-1.2.2: HTTP client (5h, 28K tokens, Sonnet) ✅ 2026-02-12
-- [ ] T-1.3.1: Rate limiter (3h, 18K tokens, Sonnet)
+- [x] T-1.3.1: Rate limiter (3h, 18K tokens, Sonnet) ✅ 2026-02-12
 - [ ] T-1.3.2: Retry handler (3h, 18K tokens, Sonnet)
 - [ ] T-1.3.3: Circuit breaker (3h, 18K tokens, Sonnet)
 - [ ] T-1.4.1: Error normalizer (4h, 22K tokens, Sonnet)
@@ -44,9 +44,9 @@
 | Metric | Value |
 |--------|-------|
 | Total Tasks | 25 |
-| Completed | 4 |
+| Completed | 5 |
 | In Progress | 0 |
-| Remaining | 21 |
-| Total Effort | ~80h (20h completed, ~60h remaining) |
+| Remaining | 20 |
+| Total Effort | ~80h (23h completed, ~57h remaining) |
 | Total Tokens | ~579K (+15% buffer = ~666K) |
-| Actual Tokens Used | ~105K (T-1.1.1 + T-1.1.2 + T-1.2.1 + T-1.2.2) |
+| Actual Tokens Used | ~123K (T-1.1.1 + T-1.1.2 + T-1.2.1 + T-1.2.2 + T-1.3.1) |

@@ -178,4 +178,62 @@ ServiceNow wraps all API responses in a `{ result: ... }` envelope. Single-recor
 - Always unwrap envelope - rejected: loses future extensibility for pagination metadata
 - Never unwrap envelope - rejected: makes single-record operations verbose
 
+### 2026-02-12 - Token Bucket Rate Limiter with Delay (No Request Dropping)
+
+**Context:**
+Need rate limiting to protect ServiceNow instances from being overwhelmed while ensuring all requests eventually complete. ServiceNow has rate limits (typically 1000 req/hour).
+
+**Decision:**
+Implement token bucket algorithm that **delays requests** when tokens are exhausted rather than rejecting them. Rate limiter is stateful in-memory with configurable `max_per_hour` and `burst_size`.
+
+**Rationale:**
+- Token bucket allows burst traffic while maintaining average rate limit
+- Delaying (not dropping) requests ensures all requests complete - appropriate for MCP's sequential request model where callers expect responses
+- In-memory state is acceptable (reset on restart is fine for v0.1.0)
+- Time injection via constructor parameter enables deterministic testing without real delays
+- Simple implementation (~100 LOC) vs heavyweight library dependencies
+
+**Consequences:**
+- Requests are throttled but never dropped (429 errors avoided)
+- Burst capacity (`burst_size: 20`) allows short bursts of activity
+- Token refill rate: `max_per_hour / 3600 / 1000` tokens per millisecond
+- State lost on server restart (acceptable for initial release)
+- Single bucket for entire server (per-table rate limiting out of scope)
+
+**Alternatives Considered:**
+- Drop requests with 429 - rejected: caller expects all requests to complete, MCP processes sequentially
+- bottleneck library - rejected: overkill for simple token bucket (adds 500KB+ dependency)
+- Sliding window algorithm - rejected: token bucket is simpler and allows burst
+- Redis-backed rate limiter - rejected: over-engineering for v0.1.0, adds Redis dependency
+
+### 2026-02-12 - Time Injection for Rate Limiter Testing
+
+**Context:**
+Rate limiter tests need to verify token refill behavior over time without waiting for real time to pass.
+
+**Decision:**
+Use constructor dependency injection for time function: `now: () => number = Date.now`. Tests pass mock time function to control time flow.
+
+**Rationale:**
+- Enables deterministic testing with fake timers
+- Tests run instantly (no real delays)
+- Production code uses `Date.now` by default (zero overhead)
+- Pattern established in OAuth token refresh testing (T-1.2.1)
+
+**Consequences:**
+- Test can advance time instantly by mutating mock time variable
+- All 23 rate limiter tests run in <10ms
+- Tests are deterministic and reliable (no flakiness from real time)
+
+**Example:**
+```typescript
+let currentTime = 0;
+const mockNow = vi.fn(() => currentTime);
+const limiter = new RateLimiter(3600, 10, mockNow);
+
+// Advance time instantly
+currentTime += 5000;
+expect(limiter.getTokenCount()).toBe(5); // Refilled 5 tokens
+```
+
 ---
