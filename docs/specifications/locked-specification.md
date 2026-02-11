@@ -1,0 +1,1 @@
+locked-specification-v1.0.md
