@@ -10,8 +10,8 @@
 - [x] T-1.3.2: Retry handler (3h, 18K tokens, Sonnet) ✅ 2026-02-12
 - [x] T-1.3.3: Circuit breaker (3h, 18K tokens, Sonnet) ✅ 2026-02-12
 - [x] T-1.4.1: Error normalizer (4h, 22K tokens, Sonnet) ✅ 2026-02-12
-- [ ] T-1.4.2: Logger setup (2h, 12K tokens, Haiku)
-- [ ] T-1.5.1: MCP server + stdio (3h, 18K tokens, Sonnet)
+- [x] T-1.4.2: Logger setup (2h, 12K tokens, Haiku) ✅ 2026-02-12
+- [x] T-1.5.1: MCP server + stdio (3h, 18K tokens, Sonnet) ✅ 2026-02-12
 - [ ] T-1.5.2: Module registry (4h, 25K tokens, Sonnet)
 
 ## M2: Priority Modules
@@ -44,9 +44,9 @@
 | Metric | Value |
 |--------|-------|
 | Total Tasks | 25 |
-| Completed | 8 |
+| Completed | 10 |
 | In Progress | 0 |
-| Remaining | 17 |
-| Total Effort | ~80h (33h completed, ~47h remaining) |
+| Remaining | 15 |
+| Total Effort | ~80h (38h completed, ~42h remaining) |
 | Total Tokens | ~579K (+15% buffer = ~666K) |
-| Actual Tokens Used | ~181K (T-1.1.1 through T-1.4.1) |
+| Actual Tokens Used | ~211K (T-1.1.1 through T-1.5.1) |
