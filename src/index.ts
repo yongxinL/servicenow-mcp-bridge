@@ -17,6 +17,7 @@ import { initializeLogger } from './logging/index.js';
 import { createAuthStrategy } from './auth/index.js';
 import { ServiceNowClient } from './client/index.js';
 import { createMcpServer, connectStdioTransport } from './server.js';
+import { registerModules } from './modules/index.js';
 
 /**
  * Main entry point - orchestrates server startup sequence.
@@ -27,8 +28,9 @@ import { createMcpServer, connectStdioTransport } from './server.js';
  * 3. Create authentication strategy
  * 4. Create ServiceNow client
  * 5. Create MCP server
- * 6. Connect stdio transport
- * 7. Setup shutdown handlers
+ * 6. Register modules (tools)
+ * 7. Connect stdio transport
+ * 8. Setup shutdown handlers
  *
  * Any error during startup causes the process to exit with code 1
  * and a descriptive error message to stderr. The server never starts
@@ -50,20 +52,17 @@ async function main(): Promise<void> {
     );
 
     // 4. Create ServiceNow client
-    // Note: Client is created as part of startup sequence but will be passed to
-    // module registry in T-1.5.2. Temporarily unused.
     const client = new ServiceNowClient(
       config.servicenow.instance,
       authStrategy,
       { timeout: config.servicenow.timeout },
     );
-    void client; // Suppress unused variable warning (used in T-1.5.2)
 
     // 5. Create MCP server
     const server = createMcpServer();
 
-    // 6. Register modules (T-1.5.2 will add this step)
-    // registerModules(server, client, config);
+    // 6. Register modules (tools) with the server
+    registerModules(server, client, config, logger);
 
     // 7. Connect stdio transport
     await connectStdioTransport(server);
