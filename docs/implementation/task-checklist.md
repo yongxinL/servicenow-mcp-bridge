@@ -2,8 +2,8 @@
 
 ## M1: Foundation
 
-- [ ] T-1.1.1: Project scaffolding (3h, 12K tokens, Sonnet)
-- [ ] T-1.1.2: Configuration system (6h, 30K tokens, Sonnet)
+- [x] T-1.1.1: Project scaffolding (3h, 12K tokens, Sonnet) ✅ 2026-02-11
+- [x] T-1.1.2: Configuration system (6h, 30K tokens, Sonnet) ✅ 2026-02-11
 - [ ] T-1.2.1: Auth strategies (6h, 35K tokens, Sonnet)
 - [ ] T-1.2.2: HTTP client (5h, 28K tokens, Sonnet)
 - [ ] T-1.3.1: Rate limiter (3h, 18K tokens, Sonnet)
@@ -44,8 +44,9 @@
 | Metric | Value |
 |--------|-------|
 | Total Tasks | 25 |
-| Completed | 0 |
+| Completed | 2 |
 | In Progress | 0 |
-| Remaining | 25 |
-| Total Effort | ~80h |
+| Remaining | 23 |
+| Total Effort | ~80h (9h completed, ~71h remaining) |
 | Total Tokens | ~579K (+15% buffer = ~666K) |
+| Actual Tokens Used | ~42K (T-1.1.1 + T-1.1.2) |

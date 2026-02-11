@@ -15,7 +15,21 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| **Total** | **0** | - |
+| Instincts | 1 | 2026-02-11 |
+| **Total** | **1** | 2026-02-11 |
+
+---
+
+## Instincts Index (Continuous Learning v2.0)
+
+### selective-env-override (confidence: 0.8)
+**Trigger:** "when implementing multi-source configuration with environment variable overrides"
+**Domain:** code-style | **Phase:** 3 | **Created:** 2026-02-11
+
+Only include fields in environment config if explicitly set. Prevents default values from overwriting config file values.
+
+**File:** `instincts/personal/selective-env-override.md`
+**Tags:** configuration, environment-variables, merge-strategy, precedence, typescript
 
 ---
 
