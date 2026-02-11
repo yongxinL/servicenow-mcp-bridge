@@ -15,12 +15,39 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 13 | 2026-02-12 |
-| **Total** | **13** | 2026-02-12 |
+| Instincts | 16 | 2026-02-12 |
+| **Total** | **16** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### registration-time-authorization (confidence: 0.9)
+**Trigger:** "when implementing authorization for API endpoints or tool access"
+**Domain:** security, architecture | **Phase:** 2,3 | **Created:** 2026-02-12
+
+Control access by registering only the tools/capabilities that should be accessible, rather than registering everything and checking at runtime. If a tool doesn't exist, it can't be called.
+
+**File:** `instincts/personal/registration-time-authorization.md`
+**Tags:** security, authorization, capability-based, tools, api-design
+
+### resilient-component-initialization (confidence: 0.9)
+**Trigger:** "when initializing multiple independent components at startup"
+**Domain:** architecture | **Phase:** 3 | **Created:** 2026-02-12
+
+Catch and log errors for individual component failures but continue initializing remaining components. Don't let one broken component prevent the entire system from starting.
+
+**File:** `instincts/personal/resilient-component-initialization.md`
+**Tags:** error-handling, initialization, resilience, startup, modules
+
+### plugin-architecture-with-static-registry (confidence: 0.85)
+**Trigger:** "when implementing plugin/module system with runtime registration"
+**Domain:** architecture | **Phase:** 2,3 | **Created:** 2026-02-12
+
+Use a static array of plugins as the single source of truth. Avoid dynamic file system scanning. Adding a plugin requires only adding it to the array.
+
+**File:** `instincts/personal/plugin-architecture-with-static-registry.md`
+**Tags:** architecture, plugins, registry, extensibility, modules
 
 ### credential-redaction-in-logs (confidence: 0.95)
 **Trigger:** "when implementing structured JSON logging for systems with credentials"

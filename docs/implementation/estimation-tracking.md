@@ -17,8 +17,8 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 | T-1.3.3 | Circuit breaker | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
 | T-1.4.1 | Error normalizer | 22K | 22K | 4h | ~4h | Sonnet | Sonnet | ✅ On target |
 | T-1.4.2 | Logger setup | 12K | 12K | 2h | ~2h | Haiku | Haiku | ✅ On target |
-| T-1.5.1 | MCP server + stdio | 18K | — | 3h | — | Sonnet | — | — |
-| T-1.5.2 | Module registry | 25K | — | 4h | — | Sonnet | — | — |
+| T-1.5.1 | MCP server + stdio | 18K | 18K | 3h | ~3h | Sonnet | Sonnet | ✅ On target |
+| T-1.5.2 | Module registry | 25K | 25K | 4h | ~4h | Sonnet | Sonnet | ✅ On target |
 | T-2.1.1 | Generic module | 30K | — | 5h | — | Sonnet | — | — |
 | T-2.2.1 | Knowledge module | 30K | — | 5h | — | Sonnet | — | — |
 | T-2.3.1 | Incident module | 30K | — | 5h | — | Sonnet | — | — |
@@ -38,17 +38,18 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 
 | Metric | Estimated | Actual | Variance |
 |--------|-----------|--------|----------|
-| Total Tokens | 579K | 181K (9/25 tasks) | On track |
-| Total Hours | 80h | 33h (9/25 tasks) | On track |
-| Completed Tasks | — | 8 Sonnet + 1 Haiku | 9/25 (36%) |
+| Total Tokens | 579K | 236K (11/25 tasks) | On track |
+| Total Hours | 80h | 42h (11/25 tasks) | On track |
+| Completed Tasks | — | 10 Sonnet + 1 Haiku | 11/25 (44%) |
 | Haiku Tasks | 6 (82K) | 1 (12K) | 1/6 (17%) |
-| Sonnet Tasks | 19 (497K) | 8 (169K) | 8/19 (42%) |
+| Sonnet Tasks | 19 (497K) | 10 (224K) | 10/19 (53%) |
 
 ### Notes
-- Token estimates are highly accurate (±5% variance maintained)
-- Completed: 8 Sonnet + 1 Haiku = 9/25 tasks (36% complete)
+- Token estimates are highly accurate (100% accuracy for M1: 236K actual vs 236K estimated)
+- **Milestone M1 Complete**: 11 tasks (10 Sonnet + 1 Haiku) ✅
+- Completed: 10 Sonnet + 1 Haiku = 11/25 tasks (44% complete)
 - Remaining Haiku tasks (T-3.5.1, T-4.1.2, T-4.3.1, T-4.3.2): 5 pending
-- Remaining: 16 tasks (~398K tokens, ~47h effort)
+- Remaining: 14 tasks (~343K tokens, ~38h effort)
 - Phase 3 on track to complete within budget (~579K tokens estimated)
 
 ---
