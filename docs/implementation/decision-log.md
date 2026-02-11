@@ -81,4 +81,50 @@ Implement custom rate limiter, retry handler, and circuit breaker (~150 LOC tota
 - p-retry for retries — rejected: simple exponential backoff is straightforward
 - opossum for circuit breaker — rejected: heavy dependency for simple state machine
 
+### 2026-02-12 - Strategy Pattern for Authentication
+
+**Context:**
+Need to support three different ServiceNow authentication methods: Basic Auth, OAuth 2.0 Client Credentials, and static Bearer tokens.
+
+**Decision:**
+Implement Strategy pattern with a common `AuthStrategy` interface and three concrete implementations (`BasicAuthStrategy`, `OAuthStrategy`, `TokenAuthStrategy`), selected via factory function.
+
+**Rationale:**
+- Clean separation of concerns - each auth method is self-contained
+- Easy to test in isolation
+- Simple to extend with new auth methods in future
+- Factory function provides type-safe selection based on config
+
+**Consequences:**
+- All strategies use Promise-based `getAuthHeaders()` even though Basic and Token are synchronous - maintains uniform interface for OAuth's async token refresh
+- Clear extension point for future auth methods (e.g., SAML, API keys)
+
+**Alternatives Considered:**
+- Single auth class with conditional logic - rejected: harder to test, violates Single Responsibility Principle
+- Separate factory classes - rejected: over-engineering for simple strategy selection
+
+### 2026-02-12 - OAuth Token Caching with 60-second Refresh Buffer
+
+**Context:**
+OAuth access tokens expire after a set duration (typically 1 hour). Need to cache tokens and refresh before expiry to avoid auth failures.
+
+**Decision:**
+Cache OAuth token in-memory with automatic refresh when current time + 60 seconds >= expiry time. Use promise lock to prevent concurrent refresh requests.
+
+**Rationale:**
+- 60-second buffer prevents race condition where token expires between header generation and API request
+- In-memory cache is simple and sufficient (token loss on restart is acceptable)
+- Promise lock ensures only one token refresh happens even with concurrent calls
+- Native fetch API for token endpoint keeps dependencies minimal
+
+**Consequences:**
+- Token is lost on server restart (acceptable: next request will fetch new token)
+- Buffer size (60s) is configurable via constructor parameter
+- Thread-safe for Node.js single-threaded model
+
+**Alternatives Considered:**
+- No caching - rejected: would make a token request on every API call (inefficient)
+- Persistent token storage (Redis, file) - rejected: over-engineering for MCP server use case
+- Longer buffer (5 minutes) - rejected: wastes token lifetime, 60s is sufficient for typical request latency
+
 ---
