@@ -15,12 +15,66 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 1 | 2026-02-11 |
-| **Total** | **1** | 2026-02-11 |
+| Instincts | 7 | 2026-02-12 |
+| **Total** | **7** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### vitest-fake-timers-concurrency (confidence: 0.8)
+**Trigger:** "when testing concurrent async operations with vitest fake timers"
+**Domain:** testing | **Phase:** 3 | **Created:** 2026-02-12
+
+Use real timers instead of fake timers when testing concurrent async operations. Fake timers can cause tests to hang because setTimeout/Promise timing doesn't advance properly.
+
+**File:** `instincts/personal/vitest-fake-timers-concurrency.md`
+**Tags:** vitest, testing, async, fake-timers, concurrency
+
+### typescript-fetch-json-assertion (confidence: 0.9)
+**Trigger:** "when parsing JSON from fetch() response in TypeScript"
+**Domain:** code-style | **Phase:** 3 | **Created:** 2026-02-12
+
+Use type assertion (`as Type`) instead of type annotation (`: Type`) for `response.json()` because TypeScript returns `Promise<any>`.
+
+**File:** `instincts/personal/typescript-fetch-json-assertion.md`
+**Tags:** typescript, fetch, type-assertion, json
+
+### native-fetch-over-libraries (confidence: 0.8)
+**Trigger:** "when choosing HTTP client library for Node.js projects"
+**Domain:** architecture | **Phase:** 2,3 | **Created:** 2026-02-12
+
+Prefer native fetch API with AbortSignal.timeout() over axios/node-fetch for Node.js 20+ projects. Zero dependencies, Web standard, future-proof.
+
+**File:** `instincts/personal/native-fetch-over-libraries.md`
+**Tags:** fetch, http, dependencies, node.js, native-api
+
+### promise-lock-pattern (confidence: 0.9)
+**Trigger:** "when implementing token refresh or preventing concurrent async operations"
+**Domain:** code-style | **Phase:** 3 | **Created:** 2026-02-12
+
+Use promise lock pattern to prevent concurrent operations: store the ongoing promise and return it to subsequent callers.
+
+**File:** `instincts/personal/promise-lock-pattern.md`
+**Tags:** async, concurrency, oauth, token-refresh, promise, lock
+
+### test-organization-by-concern (confidence: 0.7)
+**Trigger:** "when organizing unit tests for a complex module"
+**Domain:** testing | **Phase:** 3 | **Created:** 2026-02-12
+
+Organize tests into separate files by concern (url-construction, error-handling) rather than one monolithic test file per source file.
+
+**File:** `instincts/personal/test-organization-by-concern.md`
+**Tags:** testing, organization, maintainability, vitest
+
+### strategy-pattern-with-factory (confidence: 0.8)
+**Trigger:** "when implementing pluggable behavior with multiple implementations"
+**Domain:** architecture | **Phase:** 2,3 | **Created:** 2026-02-12
+
+Use Strategy pattern with factory function for type-safe selection of implementations (auth methods, payment providers, etc.).
+
+**File:** `instincts/personal/strategy-pattern-with-factory.md`
+**Tags:** design-patterns, strategy-pattern, factory, typescript, extensibility
 
 ### selective-env-override (confidence: 0.8)
 **Trigger:** "when implementing multi-source configuration with environment variable overrides"
