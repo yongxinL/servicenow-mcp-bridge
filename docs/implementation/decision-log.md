@@ -127,4 +127,55 @@ Cache OAuth token in-memory with automatic refresh when current time + 60 second
 - Persistent token storage (Redis, file) - rejected: over-engineering for MCP server use case
 - Longer buffer (5 minutes) - rejected: wastes token lifetime, 60s is sufficient for typical request latency
 
+### 2026-02-12 - ServiceNowClient with Native Fetch and AbortSignal.timeout()
+
+**Context:**
+Need HTTP client for all ServiceNow Table API and Aggregate API operations with timeout support and clean error handling.
+
+**Decision:**
+Implement `ServiceNowClient` class using native Node.js `fetch` API with `AbortSignal.timeout()` for request timeouts. Client accepts `AuthStrategy` interface and exposes typed methods for GET, POST, PATCH, DELETE, and aggregate operations.
+
+**Rationale:**
+- Native `fetch` is stable in Node.js 20+ (meets TC-001 requirement)
+- `AbortSignal.timeout()` provides clean, built-in timeout mechanism without external dependencies
+- Typed methods (`get<T>`, `post<T>`, etc.) provide type safety for consumers
+- `ServiceNowHttpError` carries status code, text, and body for downstream error normalization
+- Query parameter builder uses URLSearchParams for proper encoding
+
+**Consequences:**
+- Zero HTTP client dependencies (no axios, no node-fetch)
+- Timeout behavior is consistent with Web Fetch API standards
+- Error handling is centralized in `ServiceNowHttpError` class
+- Resilience logic (retry, rate limiting, circuit breaker) will be composed around this client externally
+
+**Alternatives Considered:**
+- axios - rejected: adds 1MB+ dependency, not needed for simple REST calls
+- node-fetch - rejected: polyfill for built-in, redundant in Node 20+
+- Manual timeout with setTimeout - rejected: AbortSignal.timeout() is cleaner and standard
+
+### 2026-02-12 - ServiceNow Response Envelope Unwrapping
+
+**Context:**
+ServiceNow wraps all API responses in a `{ result: ... }` envelope. Single-record endpoints return `{ result: {...} }`, list endpoints return `{ result: [...] }`.
+
+**Decision:**
+- `get()` and `aggregate()` return full `ServiceNowResponse<T>` with `result` array
+- `getById()`, `post()`, and `patch()` unwrap the envelope and return just the record `T`
+- `delete()` returns `void`
+
+**Rationale:**
+- List operations benefit from keeping the envelope (future: pagination, metadata)
+- Single-record operations are more ergonomic without envelope (direct access to record)
+- DELETE returns no content (204), so void return type is appropriate
+- Consistent with common ServiceNow client patterns
+
+**Consequences:**
+- Consumers must access `.result` for list operations
+- Single-record operations are simpler (no `.result` unwrapping)
+- Clear distinction between list and single-record responses in type signatures
+
+**Alternatives Considered:**
+- Always unwrap envelope - rejected: loses future extensibility for pagination metadata
+- Never unwrap envelope - rejected: makes single-record operations verbose
+
 ---
