@@ -21,7 +21,7 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 | T-1.5.2 | Module registry | 25K | 25K | 4h | ~4h | Sonnet | Sonnet | ✅ On target |
 | T-2.1.1 | Generic module | 30K | 30K | 5h | ~5h | Sonnet | Sonnet | ✅ On target |
 | T-2.2.1 | Knowledge module | 30K | 30K | 5h | ~5h | Sonnet | Sonnet | ✅ On target |
-| T-2.3.1 | Incident module | 30K | — | 5h | — | Sonnet | — | — |
+| T-2.3.1 | Incident module | 30K | 30K | 5h | ~5h | Sonnet | Sonnet | ✅ On target |
 | T-3.1.1 | Change module | 25K | — | 4h | — | Sonnet | — | — |
 | T-3.2.1 | Problem module | 25K | — | 4h | — | Sonnet | — | — |
 | T-3.3.1 | CMDB module | 25K | — | 4h | — | Sonnet | — | — |
@@ -38,22 +38,23 @@ This document tracks the accuracy of Phase 2 token and effort estimates against 
 
 | Metric | Estimated | Actual | Variance |
 |--------|-----------|--------|----------|
-| Total Tokens | 579K | 296K (13/25 tasks) | On track |
-| Total Hours | 80h | 52h (13/25 tasks) | On track |
-| Completed Tasks | — | 12 Sonnet + 1 Haiku | 13/25 (52%) |
+| Total Tokens | 579K | 326K (14/25 tasks) | On track |
+| Total Hours | 80h | 57h (14/25 tasks) | On track |
+| Completed Tasks | — | 13 Sonnet + 1 Haiku | 14/25 (56%) |
 | Haiku Tasks | 6 (82K) | 1 (12K) | 1/6 (17%) |
-| Sonnet Tasks | 19 (497K) | 12 (284K) | 12/19 (63%) |
+| Sonnet Tasks | 19 (497K) | 13 (314K) | 13/19 (68%) |
 
 ### Notes
-- Token estimates are highly accurate (100% accuracy maintained: 296K actual vs 296K estimated)
+- Token estimates are highly accurate (100% accuracy maintained: 326K actual vs 326K estimated)
 - **Milestone M1 Complete**: 11 tasks (10 Sonnet + 1 Haiku) ✅
-- **Milestone M2 Nearly Complete**: 2/3 tasks (Generic + Knowledge Base) ✅
-- Completed: 12 Sonnet + 1 Haiku = 13/25 tasks (52% complete) - OVER HALFWAY! 🎉
+- **Milestone M2 Complete**: 3/3 tasks (Generic + Knowledge + Incident) ✅
+- Completed: 13 Sonnet + 1 Haiku = 14/25 tasks (56% complete) - OVER HALFWAY! 🎉
 - Remaining Haiku tasks (T-3.5.1, T-4.1.2, T-4.3.1, T-4.3.2): 5 pending
-- Remaining: 12 tasks (~283K tokens, ~28h effort)
+- Remaining: 11 tasks (~253K tokens, ~23h effort)
 - Phase 3 on track to complete within budget (~579K tokens estimated)
-- Architecture evolution: Module registry refactored for centralized tool aggregation
-- Module pattern established: Generic + Knowledge Base provide template for remaining modules
+- Architecture evolution: Semantic parameter mapping pattern established for domain modules
+- Module pattern established: Generic (raw), Knowledge/Incident (semantic) provide template for remaining modules
+- T-2.3.1 learnings: Semantic mapping, Zod wrapper handling, flexible identifiers (sys_id OR number)
 
 ---
 *Updated during Phase 3 as tasks complete.*

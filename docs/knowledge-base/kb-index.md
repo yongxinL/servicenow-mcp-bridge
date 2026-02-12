@@ -15,12 +15,30 @@
 | Failures | 0 | - |
 | Patterns | 0 | - |
 | Decisions | 0 | - |
-| Instincts | 18 | 2026-02-12 |
-| **Total** | **18** | 2026-02-12 |
+| Instincts | 20 | 2026-02-12 |
+| **Total** | **20** | 2026-02-12 |
 
 ---
 
 ## Instincts Index (Continuous Learning v2.0)
+
+### semantic-parameter-mapping (confidence: 0.85)
+**Trigger:** "when designing API interfaces for AI assistants that interact with domain-specific systems"
+**Domain:** api-design, ai-integration | **Phase:** 2, 3 | **Created:** 2026-02-12
+
+Accept both semantic ("high") and numeric ("2") values for domain-specific fields. Map semantic values to system codes before API calls. Improves AI discoverability and user experience.
+
+**File:** `instincts/personal/semantic-parameter-mapping.md`
+**Tags:** api-design, semantic-mapping, ai-discoverability, domain-specific
+
+### zod-schema-wrapper-handling (confidence: 0.85)
+**Trigger:** "when converting Zod schemas to JSON Schema with .default() or .optional() wrappers"
+**Domain:** typescript, validation | **Phase:** 3 | **Created:** 2026-02-12
+
+Unwrap Zod modifiers (default, optional, nullable) to access inner type information. Check wrappers after base types, extract defaults and enums from innerType.
+
+**File:** `instincts/personal/zod-schema-wrapper-handling.md`
+**Tags:** zod, json-schema, validation, schema-conversion
 
 ### servicenow-encoded-query-patterns (confidence: 0.85)
 **Trigger:** "when implementing ServiceNow Table API queries with search or filtering"
