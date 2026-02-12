@@ -1,0 +1,51 @@
+{
+  "servicenow": {
+    "timeout": 30000,
+    "max_retries": 3
+  },
+  "modules": {
+    "generic": {
+      "enabled": true,
+      "allow_write": false
+    },
+    "knowledge": {
+      "enabled": true,
+      "allow_write": false
+    },
+    "incident": {
+      "enabled": true,
+      "allow_write": false
+    },
+    "change": {
+      "enabled": false,
+      "allow_write": false
+    },
+    "problem": {
+      "enabled": false,
+      "allow_write": false
+    },
+    "cmdb": {
+      "enabled": false,
+      "allow_write": false
+    },
+    "catalog": {
+      "enabled": false,
+      "allow_write": false
+    },
+    "user": {
+      "enabled": true
+    }
+  },
+  "rate_limit": {
+    "max_per_hour": 1000,
+    "burst_size": 20
+  },
+  "circuit_breaker": {
+    "enabled": false,
+    "failure_threshold": 5,
+    "reset_timeout_ms": 30000
+  },
+  "logging": {
+    "level": "info"
+  }
+}
